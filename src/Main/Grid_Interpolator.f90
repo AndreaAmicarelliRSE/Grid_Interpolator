@@ -22,7 +22,7 @@
 !              field is available in both the file formats xyz and DEM. This 
 !              tool is also useful to post-process the 2D fields of the maximum 
 !              specific height and the maximum water depth as estimated by 
-!              SPHERA v.8.0 (RSE SpA).
+!              the SPH code SPHERA v.8.0 (RSE SpA; available on GitHub).
 !-------------------------------------------------------------------------------
 program Grid_Interpolator
 !------------------------
