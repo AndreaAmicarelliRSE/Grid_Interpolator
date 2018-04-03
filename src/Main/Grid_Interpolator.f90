@@ -49,7 +49,7 @@ double precision,dimension(:,:),allocatable :: field_in,field_out
 ! Statements
 !------------------------
 !Subroutine info
-write(*,*) "***Grid Interpoltor is running:  "
+write(*,*) "***Grid Interpolator is running:  "
 write(*,*) "   This tool reads a 3D field of values from an origin grid"
 write(*,*) "      and interpolates them on a destination grid"
 write(*,*) "   Algorithm:"
