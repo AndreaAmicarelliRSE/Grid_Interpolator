@@ -1,7 +1,7 @@
 !-------------------------------------------------------------------------------
-! "Grid_Interpolator v.1.0" 
-! Copyright 2016 (RSE SpA)
-! "Grid_Interpolator v.1.0" authors and email contact are provided on 
+! "Grid_Interpolator v.2.0" 
+! Copyright 2016-2018 (RSE SpA)
+! "Grid_Interpolator v.2.0" authors and email contact are provided on 
 ! the documentation file.
 ! This program is free software: you can redistribute it and/or modify
 ! it under the terms of the GNU General Public License as published by
@@ -15,14 +15,14 @@
 ! along with this program. If not, see <http://www.gnu.org/licenses/>.
 !-------------------------------------------------------------------------------
 !-------------------------------------------------------------------------------
-! Description. “Grid_Interpolator v.1.0” (RSE SpA) reads a 3D field of values 
+! Description. “Grid_Interpolator v.2.0” (RSE SpA) reads a 3D field of values 
 !              from an input grid and interpolates them on an output grid with 
 !              a different spatial resolution. The input file is a xyz file 
 !              (with two additional ad-hoc lines at the beginning). The output 
 !              field is available in both the file formats xyz and DEM. This 
 !              tool is also useful to post-process the 2D fields of the maximum 
 !              specific height and the maximum water depth as estimated by 
-!              the SPH code SPHERA v.8.0 (RSE SpA; available on GitHub).
+!              the SPH code SPHERA v.9.0.0 (RSE SpA; available on GitHub).
 !-------------------------------------------------------------------------------
 program Grid_Interpolator
 !------------------------

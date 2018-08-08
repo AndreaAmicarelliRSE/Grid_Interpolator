@@ -1,5 +1,5 @@
 # Variables to be updated 
-VERSION = 1_0
+VERSION = 2_0
 #    bin, debug
 EXECUTION = bin
 #    -O1 (bin), -g -O0 -fbacktrace -C (gfortran debug),
@@ -8,7 +8,7 @@ COMPILATION_FLAGS = -O1
 #    gfortran, ifort
 COMPILER = gfortran
 #    -fopenmp, -openmp, (blank for debug)  
-OMP_FLAG = -fopenmp
+OMP_FLAG = 
 EXE_DIR = ../$(EXECUTION)/
 SOURCES = \
 $(wildcard ./*/*.f90)
