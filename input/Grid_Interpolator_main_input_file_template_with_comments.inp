@@ -1,0 +1,53 @@
+! Grid Interpolator main input file: template and comments
+!-------------------------------------------------------------------------------
+! "Grid_Interpolator v.2.0" 
+! Copyright 2016-2018 (RSE SpA)
+! "Grid_Interpolator v.2.0" authors and email contact are provided on 
+! the documentation file.
+! This program is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+! This program is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+! GNU General Public License for more details.
+! You should have received a copy of the GNU General Public License
+! along with this program. If not, see <http://www.gnu.org/licenses/>.
+!-------------------------------------------------------------------------------
+n_points_in x_min_out y_min_out z_min_out x_max_out y_max_out z_max_out dx_out dy_out dz_out
+input_grid_file_name
+normalized_threshold_pos normalized_threshold_neg normalized_influence_radius distance_exponent
+! n_points_in : number of input records/points
+! x_min_out : minimum x-coordinate for the boundary of the output grid (it is 
+!             shifted of dx/2 with respect to the minimum x-coordinate of the 
+!             output grid points)
+! y_min_out : minimum y-coordinate for the boundary of the output grid
+! z_min_out : minimum z-coordinate for the boundary of the output grid
+! x_max_out : maximum x-coordinate for the boundary of the output grid
+! y_max_out : maximum y-coordinate for the boundary of the output grid
+! z_max_out : maximum z-coordinate for the boundary of the output grid
+! dx_out : spatial resolution of the output grid along x-axis
+! dy_out : spatial resolution of the output grid along y-axis
+! dz_out : spatial resolution of the output grid along z-axis
+! input_grid_file_name : name (extension included) of the grid input file. This 
+!                        file (e.g. ".prn") has the following format: the first 
+!                        line is commented; each of the following lines is a 
+!                        record of 4 columns (x, y, z, variable to be 
+!                        interpolated).
+! normalized_threshold_pos : values greater than a positive threshold 
+!                            are discarded. The threshold is provided in input 
+!                            as a normalized variable. The positive threshold 
+!                            is: “threshold_pos” = “mean” + 
+!                            “normalized_threshold_pos” * “sigma”, where “mean” 
+!                            is the average and “sigma” the standard deviation.
+! normalized_threshold_neg : values smaller than a negative threshold 
+!                            are discarded. The threshold is provided in input 
+!                            as a normalized variable. The negative threshold 
+!                            is: “threshold_neg” = “mean” - 
+!                            “normalized_threshold_neg” * “sigma”.
+! normalized_influence_radius : The influence radius for interpolation is: 
+!                               "inflence_radius" = 
+!                               "normalized_inflence_radius" * sqrt(3) * dx_out
+! distance_exponent : exponent of the distance for Shepard's interpolation 
+!                     (a positive integer).

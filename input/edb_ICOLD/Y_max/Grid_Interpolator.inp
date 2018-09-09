@@ -1,0 +1,6 @@
+n_points_in       x_min       y_min       z_min       x_max       y_max       z_max      dx_out      dy_out      dz_out
+       21822  1152.77000    71.07100 -1.00000e-3 25779.70000  9926.20000  1.00000e-3     9.47609     9.47609  2.00000e-3
+input_grid_file_name
+edb_ICOLD_Y_max.prn
+normalized_threshold_pos normalized_threshold_neg
+999.e6 999.e6

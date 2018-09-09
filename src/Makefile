@@ -1,5 +1,5 @@
 # Variables to be updated 
-VERSION = 2_0
+VERSION = 2_0_AA
 #    bin, debug
 EXECUTION = bin
 #    -O1 (bin), -g -O0 -fbacktrace -C (gfortran debug),
@@ -7,7 +7,7 @@ EXECUTION = bin
 COMPILATION_FLAGS = -O1
 #    gfortran, ifort
 COMPILER = gfortran
-#    -fopenmp, -openmp, (blank for debug)  
+#    -fopenmp, -qopenmp, (blank for debug)  
 OMP_FLAG = 
 EXE_DIR = ../$(EXECUTION)/
 SOURCES = \
