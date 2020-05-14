@@ -56,8 +56,8 @@
 !    “normalized_threshold_neg” * “sigma”.
 ![?] <normalized_influence_radius>: The influence radius for interpolation is: 
 !    "inflence_radius" = "normalized_inflence_radius" * sqrt(3) * "dx_out"
-!## <distance_exponent>: exponent of the distance for Shepard's interpolation 
-!   (a positive integer)
+![?] <distance_exponent>: exponent of the distance for Shepard's interpolation 
+!    (a positive integer)
 !-------------------------------------------------------------------------------
 ![*] <n_points_in> <x_min_out> <y_min_out> <z_min_out> <x_max_out> <y_max_out> 
 !    <z_max_out> <dx_out> <dy_out> <dz_out>
