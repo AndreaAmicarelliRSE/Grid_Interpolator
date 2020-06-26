@@ -1,18 +1,19 @@
 !-------------------------------------------------------------------------------
-! "Grid_Interpolator v.2.0" 
-! Copyright 2016-2018 (RSE SpA)
-! "Grid_Interpolator v.2.0" authors and email contact are provided on 
-! the documentation file.
-! This program is free software: you can redistribute it and/or modify
-! it under the terms of the GNU General Public License as published by
+! "Grid_Interpolator v.2.0" (DEM manager tool)
+! Copyright 2016-2020 (RSE SpA)
+! "Grid_Interpolator v.2.0" authors and email contact are provided on the 
+! documentation file.
+! This file is part of Grid_Interpolator v.2.0 .
+! Grid_Interpolator v.2.0 is free software: you can redistribute it and/or 
+! modify it under the terms of the GNU General Public License as published by
 ! the Free Software Foundation, either version 3 of the License, or
 ! (at your option) any later version.
-! This program is distributed in the hope that it will be useful,
+! Grid_Interpolator is distributed in the hope that it will be useful,
 ! but WITHOUT ANY WARRANTY; without even the implied warranty of
 ! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ! GNU General Public License for more details.
 ! You should have received a copy of the GNU General Public License
-! along with this program. If not, see <http://www.gnu.org/licenses/>.
+! along with Grid_Interpolator. If not, see <http://www.gnu.org/licenses/>.
 !-------------------------------------------------------------------------------
 !-------------------------------------------------------------------------------
 ! Description. “Grid_Interpolator v.2.0” (RSE SpA) reads a 3D field of values 
@@ -125,7 +126,7 @@ write(*,*) "positive threshold: ",threshold_pos
 write(*,*) "negative threshold: ",threshold_neg
 write(*,*) "End Reading the origin field"
 ! End 1)
-! 2) Interpolation (inverse of distance**2)
+! 2) Interpolation (inverse of distance**n)
 write(*,*) "2) Interpolation "
 i_record = 0
 do k=1,nz_out
