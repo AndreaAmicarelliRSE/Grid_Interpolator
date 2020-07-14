@@ -58,16 +58,23 @@
 !    "inflence_radius" = "normalized_inflence_radius" * sqrt(3) * "dx_out"
 ![?] <distance_exponent>: exponent of the distance for Shepard's interpolation 
 !    (a positive integer)
+![?] <lam_min>: database minimum longitude in the geodetic system
+![?] <phi_min>: database minimum latitude in the geodetic system
+![?] <abs_mean_latitude>: absolute value of the mean latitude with respect to 
+!    the maximum latitude variation, provided the minimum latitude. 
+!    Typically, abs_mean_latitude = phi_min + delta_lat/2
 !-------------------------------------------------------------------------------
 ![*] <n_points_in> <x_min_out> <y_min_out> <z_min_out> <x_max_out> <y_max_out> 
 !    <z_max_out> <dx_out> <dy_out> <dz_out>
 ![*] <input_grid_file_name>
 ![*] <normalized_threshold_pos> <normalized_threshold_neg> 
 !    <normalized_influence_radius> <distance_exponent>
+![*] <lam_min> <phi_min> <abs_mean_latitude>
 !-------------------------------------------------------------------------------
 !<<<****************************************************************************
 ___ ___ ___ ___ ___ ___ ___ ___ ___ ___
 ___
 ___ ___ ___ ___
+___ ___ ___
 !>>>****************************************************************************
 !-------------------------------------------------------------------------------

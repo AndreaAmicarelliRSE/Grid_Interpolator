@@ -40,7 +40,8 @@ double precision :: denom,dx_out,dy_out,dz_out,distance,x_min_out,y_min_out
 double precision :: y_max_out,z_max_out,threshold_pos,threshold_neg,mean,sigma
 double precision :: normalized_threshold_pos,normalized_threshold_neg,z_min_out
 double precision :: x_max_out,normalized_influence_radius
-double precision :: abs_mean_latitude,lam_min,phi_min,L_x,L_y
+double precision :: abs_mean_latitude,lam_min,phi_min
+double precision :: delta_lon,delta_lat,delta_x,delta_y
 double precision,dimension(:,:),allocatable :: field_in,field_out
 double precision,dimension(:,:),allocatable :: field_out_lon_lat
 character(100) :: input_grid_file_name
@@ -55,6 +56,8 @@ character(100) :: input_grid_file_name
 !------------------------
 mean = 0.d0
 sigma = 0.d0
+delta_lon = 1.
+delta_lat = 1.
 !------------------------
 ! Statements
 !------------------------
@@ -183,16 +186,11 @@ do j=1,n_points_out
 enddo
 !$omp end parallel do
 write(*,*) "End Interpolation "
-! Grid conversion from DEM2xyz v.2.0 (RSE SpA)”:  
-! (X,Y) in (m) to (lon,lat) in (°)
-abs_mean_latitude = abs_mean_latitude / 180.d0 * 3.1415926
-L_x = 111412.84d0 * dcos(abs_mean_latitude) - 93.5d0 * dcos(3.d0 *             &
-        abs_mean_latitude) + 0.118d0 * dcos(5.d0 * abs_mean_latitude)
-L_y = (111132.92d0 - 559.82d0 * dcos(2.d0 * abs_mean_latitude) +               &
-        1.175d0 * dcos(4.d0 * abs_mean_latitude) - 0.0023d0 * dcos(6.d0 *      &
-        abs_mean_latitude))
-field_out_lon_lat(:,1) = field_out(:,1)/L_x + lam_min
-field_out_lon_lat(:,2) = field_out(:,2)/L_y + phi_min
+! Grid conversion: (X,Y) in (m) to (lon,lat) in (°)
+call delta_lon_lat_to_delta_x_y(delta_lon,delta_lat,abs_mean_latitude,delta_x, &
+        delta_y)
+field_out_lon_lat(:,1) = field_out(:,1)/delta_x + lam_min
+field_out_lon_lat(:,2) = field_out(:,2)/delta_y + phi_min
 ! End 2)
 ! 3) Writing the output field
 write(*,*) "3)  Writing the output field "
