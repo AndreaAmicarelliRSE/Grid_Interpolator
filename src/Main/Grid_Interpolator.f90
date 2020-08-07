@@ -40,7 +40,10 @@ double precision :: denom,dx_out,dy_out,dz_out,distance,x_min_out,y_min_out
 double precision :: y_max_out,z_max_out,threshold_pos,threshold_neg,mean,sigma
 double precision :: normalized_threshold_pos,normalized_threshold_neg,z_min_out
 double precision :: x_max_out,normalized_influence_radius
+double precision :: abs_mean_latitude,lam_min,phi_min
+double precision :: delta_lon,delta_lat,delta_x,delta_y
 double precision,dimension(:,:),allocatable :: field_in,field_out
+double precision,dimension(:,:),allocatable :: field_out_lon_lat
 character(100) :: input_grid_file_name
 !------------------------
 ! Explicit interfaces
@@ -53,6 +56,8 @@ character(100) :: input_grid_file_name
 !------------------------
 mean = 0.d0
 sigma = 0.d0
+delta_lon = 1.
+delta_lat = 1.
 !------------------------
 ! Statements
 !------------------------
@@ -79,6 +84,8 @@ endif
 read(11,*)
 read(11,*) normalized_threshold_pos,normalized_threshold_neg,                  &
    normalized_influence_radius,distance_exponent
+read(11,*)
+read(11,*) lam_min,phi_min,abs_mean_latitude
 close(11)
 nx_out = int((x_max_out - x_min_out) / dx_out)
 ny_out = int((y_max_out - y_min_out) / dy_out)
@@ -96,6 +103,14 @@ if(.not.allocated(field_out)) then
    if (alloc_stat/=0) then
       write(*,*) "Allocation of field_out failed; the execution terminates ",  &
          "here."
+      stop
+   endif
+endif
+if(.not.allocated(field_out_lon_lat)) then
+   allocate(field_out_lon_lat(n_points_out,2),STAT=alloc_stat)
+   if (alloc_stat/=0) then
+      write(*,*) "Allocation of field_out_lon_lat failed; the execution ",     &
+         "terminates here."
       stop
    endif
 endif
@@ -171,16 +186,28 @@ do j=1,n_points_out
 enddo
 !$omp end parallel do
 write(*,*) "End Interpolation "
+! Grid conversion: (X,Y) in (m) to (lon,lat) in (°)
+call delta_lon_lat_to_delta_x_y(delta_lon,delta_lat,abs_mean_latitude,delta_x, &
+        delta_y)
+field_out_lon_lat(:,1) = field_out(:,1)/delta_x + lam_min
+field_out_lon_lat(:,2) = field_out(:,2)/delta_y + phi_min
 ! End 2)
 ! 3) Writing the output field
 write(*,*) "3)  Writing the output field "
 open(13,file='output_field.csv')
 write(13,'(4a)') "x;","y;","z;","variable"
 do i=1,n_points_out
-   write(13,'(3(e15.6,a),e15.6)') field_out(i,1),";",field_out(i,2),";",        &
+   write(13,'(3(e15.6,a),e15.6)') field_out(i,1),";",field_out(i,2),";",       &
       field_out(i,4),";",field_out(i,4) 
 enddo
 close(13)
+open (14,file='output_field_lon_lat.csv')
+write(14,'(4a)') "lam;","phi;","z;","variable"
+do i=1,n_points_out
+   write(14,'(2(f15.12,a),e15.6,a,e15.6)') field_out_lon_lat(i,1),";",         &
+      field_out_lon_lat(i,2),";", field_out(i,4),";",field_out(i,4) 
+enddo
+close(14)
 open(12,file='output_field.dem')
 write(12,'(a,i15)') "ncols ",nx_out
 write(12,'(a,i15)') "nrows ",ny_out
@@ -215,6 +242,14 @@ if(allocated(field_out)) then
    if (alloc_stat/=0) then
       write(*,*) "Deallocation of field_out failed; the execution terminates ",&
          "here."
+      stop
+   endif
+endif
+if(allocated(field_out_lon_lat)) then
+   deallocate(field_out_lon_lat,STAT=alloc_stat)
+   if (alloc_stat/=0) then
+      write(*,*) "Deallocation of field_out_lon_lat failed; the execution    ",&
+         "terminates here."
       stop
    endif
 endif
