@@ -1,1 +1,1 @@
-This folders hosts the executable codes.
+This folder hosts the executable codes.
