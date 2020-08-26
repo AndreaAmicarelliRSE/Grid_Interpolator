@@ -142,7 +142,7 @@ write(*,*) "positive threshold: ",threshold_pos
 write(*,*) "negative threshold: ",threshold_neg
 write(*,*) "End Reading the origin field"
 ! End 1)
-! 2) Interpolation (inverse of distance**n)
+! 2) Interpolation (inverse of distance to the power of n)
 write(*,*) "2) Interpolation "
 i_record = 0
 do k=1,nz_out
@@ -212,8 +212,10 @@ close(14)
 open(12,file='output_field.dem')
 write(12,'(a,i15)') "ncols ",nx_out
 write(12,'(a,i15)') "nrows ",ny_out
-write(12,'(a,g15.5)') "xllcorner ",x_min_out
-write(12,'(a,g15.5)') "yllcorner ",y_min_out
+x_min_out = x_min_out + 0.5d0 * dx_out
+y_min_out = y_min_out + 0.5d0 * dy_out
+write(12,'(a,ES18.10)') "xllcorner ",x_min_out
+write(12,'(a,ES18.10)') "yllcorner ",y_min_out
 write(12,'(a,g15.5)') "cellsize ",dx_out
 write(12,'(2a)') "NODATA_value ","-999."  
 do i=ny_out,1,-1
