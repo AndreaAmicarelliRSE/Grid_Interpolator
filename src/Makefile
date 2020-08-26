@@ -37,6 +37,14 @@ COMPILER = gfortran
 #          " debug"
 EXECUTION = optimized
 
+#    PARALLELIZATION
+#       Suggested values:
+#          parallel simulations
+#             " OMP"
+#          sequential simulations
+#             " NO"
+PARALLELIZATION = OMP
+
 # Variables to be modified: end
 
 # IDs of the above choices reported in the name of the executable code
@@ -50,6 +58,11 @@ ifeq ($(EXECUTION), optimized)
    else ifeq ($(EXECUTION), debug)
       ID_EXECUTION = 2
 endif
+ifeq ($(PARALLELIZATION), NO)
+   ID_PARALLELIZATION = 0
+   else ifeq ($(PARALLELIZATION), OMP)
+      ID_PARALLELIZATION = 1
+endif
 
 # COMPILATION_FLAGS
 COMPILATION_FLAGS = -O1
@@ -61,6 +74,16 @@ ifeq ($(EXECUTION), debug)
    endif
 endif
 
+# OMP_FLAG
+OMP_FLAG =  
+ifeq ($(PARALLELIZATION), OMP)
+   ifeq ($(COMPILER), ifort)
+      OMP_FLAG = -qopenmp
+      else ifeq ($(COMPILER), gfortran)
+         OMP_FLAG = -fopenmp
+   endif
+endif
+
 EXE_DIR = ../exe/
 
 SOURCES = \
@@ -69,7 +92,7 @@ $(wildcard ./Topography/*.f90)
 MAIN_FILE_ROOT = ./Main/Grid_Interpolator
 
 EXE_CODE = \
-$(EXE_DIR)Grid_Interpolator_$(VERSION)_$(ID_COMPILER)$(ID_EXECUTION)
+$(EXE_DIR)Grid_Interpolator_$(VERSION)_$(ID_COMPILER)$(ID_EXECUTION)$(ID_PARALLELIZATION)
 
 OBJECTS = $(patsubst %.f90,%.o,$(SOURCES))
 
@@ -82,11 +105,11 @@ all: touch compile link clean
 compile: $(SOURCES)
 
 $(SOURCES): %.f90: %.o
-	$(COMPILER) $@ -o $< $(COMPILATION_FLAGS) -c
+	$(COMPILER) $@ -o $< $(OMP_FLAG) $(COMPILATION_FLAGS) -c
 
 link: $(OBJECTS)
 	touch $(EXE_CODE).x
-	$(COMPILER) $(MAIN_FILE_ROOT).f90 $^ -o $(EXE_CODE).x $(COMPILATION_FLAGS)
+	$(COMPILER) $(MAIN_FILE_ROOT).f90 $^ -o $(EXE_CODE).x $(OMP_FLAG) $(COMPILATION_FLAGS)
 	rm -f $(MAIN_FILE_ROOT).o
 
 clean: $(OBJECTS)

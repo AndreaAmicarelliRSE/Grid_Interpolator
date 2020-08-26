@@ -72,12 +72,13 @@
 ![*] <lam_min> <phi_min> <abs_mean_latitude>
 !-------------------------------------------------------------------------------
 !<<<****************************************************************************
-! mandatory (comment) line
+! here is a mandatory (comment) line
 ___ ___ ___ ___ ___ ___ ___ ___ ___ ___
-! mandatory (comment) line
+! here is a mandatory (comment) line
 ___
-! mandatory (comment) line
+! here is a mandatory (comment) line
 ___ ___ ___ ___
+! here is a mandatory (comment) line
 ___ ___ ___
 !>>>****************************************************************************
 !-------------------------------------------------------------------------------

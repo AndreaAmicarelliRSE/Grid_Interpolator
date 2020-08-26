@@ -24,7 +24,8 @@
 !              This tool is also useful to post-process the 2D fields of the 
 !              maximum specific height and the maximum water depth as estimated 
 !              by the CFD-SPH code SPHERA v.9.0.0 (RSE SpA; available on 
-!              github.com).
+!              github.com). Output coordinates are also expressed as 
+!              geographical coordinates (longitude, latitude).
 !-------------------------------------------------------------------------------
 program Grid_Interpolator
 !------------------------
@@ -156,7 +157,7 @@ do k=1,nz_out
 enddo
 !$omp parallel do default(none)                                                &
 !$omp shared(n_points_out,n_points_in,field_in,field_out,dx_out,threshold_pos) &
-!$omp shared(threshold_neg)                                                    &
+!$omp shared(threshold_neg,normalized_influence_radius,distance_exponent)      &
 !$omp private(j,denom,distance,i)
 do j=1,n_points_out
    denom = 0.d0
@@ -189,8 +190,8 @@ write(*,*) "End Interpolation "
 ! Grid conversion: (X,Y) in (m) to (lon,lat) in (°)
 call delta_lon_lat_to_delta_x_y(delta_lon,delta_lat,abs_mean_latitude,delta_x, &
         delta_y)
-field_out_lon_lat(:,1) = field_out(:,1)/delta_x + lam_min
-field_out_lon_lat(:,2) = field_out(:,2)/delta_y + phi_min
+field_out_lon_lat(:,1) = delta_lon * field_out(:,1)/delta_x + lam_min
+field_out_lon_lat(:,2) = delta_lat * field_out(:,2)/delta_y + phi_min
 ! End 2)
 ! 3) Writing the output field
 write(*,*) "3)  Writing the output field "
