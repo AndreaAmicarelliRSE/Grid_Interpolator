@@ -63,6 +63,8 @@
 ![?] <abs_mean_latitude>: absolute value of the mean latitude with respect to 
 !    the maximum latitude variation, provided the minimum latitude. 
 !    Typically, abs_mean_latitude = phi_min + delta_lat/2
+![?] <missing_data_value>: value to be assigned to the output points whose 
+!    influence region contains no input data
 !-------------------------------------------------------------------------------
 ![*] <n_points_in> <x_min_out> <y_min_out> <z_min_out> <x_max_out> <y_max_out> 
 !    <z_max_out> <dx_out> <dy_out> <dz_out>
@@ -70,6 +72,7 @@
 ![*] <normalized_threshold_pos> <normalized_threshold_neg> 
 !    <normalized_influence_radius> <distance_exponent>
 ![*] <lam_min> <phi_min> <abs_mean_latitude>
+![*] <missing_data_value>
 !-------------------------------------------------------------------------------
 !<<<****************************************************************************
 ! here is a mandatory (comment) line
@@ -80,5 +83,7 @@ ___
 ___ ___ ___ ___
 ! here is a mandatory (comment) line
 ___ ___ ___
+! here is a mandatory (comment) line
+___
 !>>>****************************************************************************
 !-------------------------------------------------------------------------------

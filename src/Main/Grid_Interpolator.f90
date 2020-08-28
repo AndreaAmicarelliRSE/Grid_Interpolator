@@ -40,7 +40,7 @@ integer(4) :: read_stat,open_stat,alloc_stat,distance_exponent
 double precision :: denom,dx_out,dy_out,dz_out,distance,x_min_out,y_min_out
 double precision :: y_max_out,z_max_out,threshold_pos,threshold_neg,mean,sigma
 double precision :: normalized_threshold_pos,normalized_threshold_neg,z_min_out
-double precision :: x_max_out,normalized_influence_radius
+double precision :: x_max_out,normalized_influence_radius,missing_data_value
 double precision :: abs_mean_latitude,lam_min,phi_min
 double precision :: delta_lon,delta_lat,delta_x,delta_y
 double precision,dimension(:,:),allocatable :: field_in,field_out
@@ -87,6 +87,8 @@ read(11,*) normalized_threshold_pos,normalized_threshold_neg,                  &
    normalized_influence_radius,distance_exponent
 read(11,*)
 read(11,*) lam_min,phi_min,abs_mean_latitude
+read(11,*)
+read(11,*) missing_data_value
 close(11)
 nx_out = int((x_max_out - x_min_out) / dx_out)
 ny_out = int((y_max_out - y_min_out) / dy_out)
@@ -115,8 +117,8 @@ if(.not.allocated(field_out_lon_lat)) then
       stop
    endif
 endif
-field_in = -999.d0
-field_out = 0.d0
+field_in(:,:) = -999.d0
+field_out(:,:) = 0.d0
 open(12,file=trim(input_grid_file_name),IOSTAT=open_stat)
 if (open_stat/=0) then
    write(0,*) "Error in opening .txt input file. The program stops here. "
@@ -158,6 +160,7 @@ enddo
 !$omp parallel do default(none)                                                &
 !$omp shared(n_points_out,n_points_in,field_in,field_out,dx_out,threshold_pos) &
 !$omp shared(threshold_neg,normalized_influence_radius,distance_exponent)      &
+!$omp shared(missing_data_value)                                               &
 !$omp private(j,denom,distance,i)
 do j=1,n_points_out
    denom = 0.d0
@@ -169,7 +172,7 @@ do j=1,n_points_out
                     field_out(j,3)) ** 2)
          if (distance<(1.d-6*dx_out)) then
             field_out(j,4) = field_in(i,4)
-            denom = 0.d0
+            denom = 1.d0
             exit
             else
                if ((distance<=(normalized_influence_radius*dx_out*dsqrt(3.d0)))&
@@ -183,7 +186,11 @@ do j=1,n_points_out
             cycle
       endif
    enddo
-   if (denom/=0.d0) field_out(j,4) = field_out(j,4) / denom
+   if (denom/=0.d0) then
+      field_out(j,4) = field_out(j,4) / denom
+      else
+         field_out(j,4) = missing_data_value
+   endif
 enddo
 !$omp end parallel do
 write(*,*) "End Interpolation "
@@ -217,11 +224,10 @@ y_min_out = y_min_out + 0.5d0 * dy_out
 write(12,'(a,ES18.10)') "xllcorner ",x_min_out
 write(12,'(a,ES18.10)') "yllcorner ",y_min_out
 write(12,'(a,g15.5)') "cellsize ",dx_out
-write(12,'(2a)') "NODATA_value ","-999."  
+write(12,*) "NODATA_value ",missing_data_value  
 do i=ny_out,1,-1
    do j=1,nx_out
-      k = (i - 1) * nx_out + j 
-      if (field_out(k,4)==0.d0) field_out(k,4) = -999.d0
+      k = (i - 1) * nx_out + j
       write(12,'(1x,g15.5)',ADVANCE='NO') field_out(k,4) 
    enddo
    write(12,*)
