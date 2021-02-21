@@ -44,7 +44,8 @@
 ![?] <input_grid_file_name>: name (extension included) of the grid input file. 
 !    This file (e.g. ".prn") has the following format: the first line is 
 !    commented; each of the following lines is a record of 4 columns ("x", "y", 
-!    "z", variable to be interpolated).
+!    "z", variable to be interpolated). The values "-999." are not involved in 
+!    the interpolation procedure.
 ![?] <normalized_threshold_pos>: values greater than a positive threshold are 
 !    discarded. The threshold is provided in input as a normalized variable. 
 !    The positive threshold is: “threshold_pos” = “mean” + 
