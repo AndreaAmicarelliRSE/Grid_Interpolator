@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# "Grid_Interpolator v.2.0" 
-# Copyright 2016-2018 (RSE SpA)
+# "Grid_Interpolator v.2.0" (Grid manager tool)
+# Copyright 2016-2021 (RSE SpA)
 # "Grid_Interpolator v.2.0" authors and email contact are provided on 
 # the documentation file.
 # This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ COMPILER = gfortran
 #       Suggested values:
 #          " optimized"
 #          " debug"
-EXECUTION = optimized
+EXECUTION = debug
 
 #    PARALLELIZATION
 #       Suggested values:
@@ -87,9 +87,15 @@ endif
 EXE_DIR = ../exe/
 
 SOURCES = \
+$(wildcard ./Modules/main_module.f90) \
+$(wildcard ./Main_algorithm/interpolation.f90) \
+$(wildcard ./Main_algorithm/output_grid_partition.f90) \
+$(wildcard ./Memory_IO/*.f90) \
+$(wildcard ./Pre_processing/*.f90) \
+$(wildcard ./Post_processing/*.f90) \
 $(wildcard ./Topography/*.f90)
 
-MAIN_FILE_ROOT = ./Main/Grid_Interpolator
+MAIN_FILE_ROOT = ./Main_algorithm/Grid_Interpolator
 
 EXE_CODE = \
 $(EXE_DIR)Grid_Interpolator_$(VERSION)_$(ID_COMPILER)$(ID_EXECUTION)$(ID_PARALLELIZATION)

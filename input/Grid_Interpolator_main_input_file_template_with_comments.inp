@@ -1,7 +1,7 @@
 ! Grid Interpolator main input file: template and comments
 !-------------------------------------------------------------------------------
-! "Grid_Interpolator v.2.0" 
-! Copyright 2016-2018 (RSE SpA)
+! "Grid_Interpolator v.2.0" (Grid manager tool)
+! Copyright 2016-2021 (RSE SpA)
 ! "Grid_Interpolator v.2.0" authors and email contact are provided on 
 ! the documentation file.
 ! This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,6 @@
 !    !>>> end of a section to be filled with input data
 !    =    start of a variable value
 !-------------------------------------------------------------------------------
-![?] <n_points_in>: number of input records/points
 ![?] <x_min_out>: minimum x-coordinate for the boundary of the output grid (it 
 !    is smaller of dx/2 than the minimum x-coordinate of the output grid points)
 ![?] <y_min_out>: minimum y-coordinate for the boundary of the output grid
@@ -41,11 +40,6 @@
 ![?] <dx_out>: spatial resolution of the output grid along x-axis
 ![?] <dy_out>: spatial resolution of the output grid along y-axis
 ![?] <dz_out>: spatial resolution of the output grid along z-axis
-![?] <input_grid_file_name>: name (extension included) of the grid input file. 
-!    This file (e.g. ".prn") has the following format: the first line is 
-!    commented; each of the following lines is a record of 4 columns ("x", "y", 
-!    "z", variable to be interpolated). The values "-999." are not involved in 
-!    the interpolation procedure.
 ![?] <normalized_threshold_pos>: values greater than a positive threshold are 
 !    discarded. The threshold is provided in input as a normalized variable. 
 !    The positive threshold is: “threshold_pos” = “mean” + 
@@ -63,28 +57,64 @@
 ![?] <phi_min>: database minimum latitude in the geodetic system
 ![?] <abs_mean_latitude>: absolute value of the mean latitude with respect to 
 !    the maximum latitude variation, provided the minimum latitude. 
-!    Typically, abs_mean_latitude = phi_min + delta_lat/2
+!    Typically, abs_mean_latitude = phi_min + delta_lat/2. In case of negative 
+!    value, the input and output reference systems are supposed to be Cartesian 
+!    or cartographic: no conversion to geographic coordinates is carried out.
 ![?] <missing_data_value>: value to be assigned to the output points whose 
 !    influence region contains no input data
 !-------------------------------------------------------------------------------
-![*] <n_points_in> <x_min_out> <y_min_out> <z_min_out> <x_max_out> <y_max_out> 
+![*] <x_min_out> <y_min_out> <z_min_out> <x_max_out> <y_max_out> 
 !    <z_max_out> <dx_out> <dy_out> <dz_out>
-![*] <input_grid_file_name>
 ![*] <normalized_threshold_pos> <normalized_threshold_neg> 
 !    <normalized_influence_radius> <distance_exponent>
 ![*] <lam_min> <phi_min> <abs_mean_latitude>
 ![*] <missing_data_value>
 !-------------------------------------------------------------------------------
 !<<<****************************************************************************
-! here is a mandatory (comment) line
-___ ___ ___ ___ ___ ___ ___ ___ ___ ___
-! here is a mandatory (comment) line
-___
-! here is a mandatory (comment) line
+! This is a mandatory (comment) line
+___ ___ ___ ___ ___ ___ ___ ___ ___
+! This is a mandatory (comment) line
 ___ ___ ___ ___
-! here is a mandatory (comment) line
+! This is a mandatory (comment) line
 ___ ___ ___
-! here is a mandatory (comment) line
+! This is a mandatory (comment) line
 ___
+!>>>****************************************************************************
+!-------------------------------------------------------------------------------
+![?] <n_parts_out_x>: number of parts of the output grid along x-axis. The 
+!                     output grid is possibly partitioned in several files. 
+!                     They are ordered as follows: x-values ascending, then 
+!                     y-values descending, finally z-values ascending.
+!                     <n_parts_out_x> cannot be larger than 
+!                     (<x_max_out>-<x_min_out>)/<dx_out>
+!-------------------------------------------------------------------------------
+![*] <n_parts_out_x> <n_parts_out_y> <n_parts_out_z>
+!-------------------------------------------------------------------------------
+!<<<****************************************************************************
+! This is a mandatory (comment) line
+___ ___ ___
+!>>>****************************************************************************
+![?] <n_input_grid_files>: number of input grid files
+!-------------------------------------------------------------------------------
+![*] <n_input_grid_files>
+!-------------------------------------------------------------------------------
+!<<<****************************************************************************
+! This is a mandatory (comment) line
+___
+!>>>****************************************************************************
+!-------------------------------------------------------------------------------
+![?] The current section has to be repeated for each input grid file
+![?] <input_grid_file_name>: name (extension included) of the grid input file. 
+!    This file (e.g. ".prn") has the following format: the first line is 
+!    commented; each of the following lines is a record of 4 columns ("x", "y", 
+!    "z", variable to be interpolated). The values "-999." are not involved in 
+!    the interpolation procedure.
+![?] <n_points_in_file>: number of input records/points of the current file
+!-------------------------------------------------------------------------------
+![*] <input_grid_file_name> <n_points_in_file> 
+!-------------------------------------------------------------------------------
+!<<<****************************************************************************
+! This is a mandatory (comment) line
+___ ___
 !>>>****************************************************************************
 !-------------------------------------------------------------------------------

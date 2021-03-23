@@ -1,6 +1,6 @@
 !-------------------------------------------------------------------------------
-! "Grid_Interpolator v.2.0" (DEM manager tool)
-! Copyright 2016-2020 (RSE SpA)
+! "Grid_Interpolator v.2.0" (Grid manager tool)
+! Copyright 2016-2021 (RSE SpA)
 ! "Grid_Interpolator v.2.0" authors and email contact are provided on the 
 ! documentation file.
 ! This file is part of Grid_Interpolator v.2.0 .
