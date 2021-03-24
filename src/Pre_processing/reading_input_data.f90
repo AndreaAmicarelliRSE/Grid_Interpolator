@@ -138,9 +138,9 @@ do i_igf=1,n_input_grid_files
    do iii=1,n_points_in_file(i_igf)
      read(12,*) field_in(i_record,1),field_in(i_record,2),field_in(i_record,3),&
         field_in(i_record,4)
-     eps = 1.d-9 * (missing_data_value ** 2) / dabs(missing_data_value)
-     if ((field_in(i_record,4)>(missing_data_value+eps)).or.                   &
-         (field_in(i_record,4)<(missing_data_value-eps))) then
+     eps = 1.d-9 * (-999.d0 ** 2) / dabs(-999.d0)
+     if ((field_in(i_record,4)>(-999.d0+eps)).or.                              &
+         (field_in(i_record,4)<(-999.d0-eps))) then
         mean = mean + field_in(i_record,4)
         sigma = sigma + field_in(i_record,4) ** 2
         else

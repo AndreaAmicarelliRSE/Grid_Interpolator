@@ -68,7 +68,8 @@
 ![*] <normalized_threshold_pos> <normalized_threshold_neg> 
 !    <normalized_influence_radius> <distance_exponent>
 ![*] <lam_min> <phi_min> <abs_mean_latitude>
-![*] <missing_data_value>
+![*] <missing_data_value>: missing-data value assigned in output. The 
+!    missing-data value in input is assumed to be "-999." .
 !-------------------------------------------------------------------------------
 !<<<****************************************************************************
 ! This is a mandatory (comment) line
