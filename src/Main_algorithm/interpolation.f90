@@ -30,8 +30,11 @@ use main_module
 implicit none
 ! Generic node indices along x/y/z axis within "do" constructs
 integer(4) :: ix,iy,iz
-! Globla ID of a generic input record
+! Globlal ID of a generic input record
 integer(4) :: i_rec
+! Percentage of rows interpolated
+integer(4) :: iy_perc_done
+integer(4) :: aux_integer
 double precision :: denom,distance,delta_x,delta_y,delta_lon,delta_lat
 character(100) :: array_name
 !------------------------
@@ -84,6 +87,7 @@ delta_lon = 1.d0
 delta_lat = 1.d0
 field_out(:,:,:,:) = 0.d0
 if (abs_mean_latitude>-1.d-9) field_out_lon_lat(:,:,:,:) = 0.d0
+aux_integer = 0
 !------------------------
 ! Statements
 !------------------------
@@ -92,7 +96,8 @@ do iz=1,nz_out
 !$omp shared(n_points_in,field_in,field_out,dx_out,threshold_pos,nx_out,ny_out)&
 !$omp shared(threshold_neg,normalized_influence_radius,distance_exponent)      &
 !$omp shared(missing_data_value,iz,x_min_out,y_min_out,z_min_out,dy_out,dz_out)&
-!$omp private(ix,iy,denom,distance,i_rec)
+!$omp shared(aux_integer)                                                      &
+!$omp private(ix,iy,denom,distance,i_rec,iy_perc_done)
    do iy=1,ny_out
       do ix=1,nx_out
          field_out(ix,iy,iz,1) = x_min_out + dx_out * (ix - 0.5d0)
@@ -130,6 +135,14 @@ do iz=1,nz_out
                field_out(ix,iy,iz,4) = missing_data_value
          endif
       enddo
+      iy_perc_done = int(dfloat(iy / ny_out) * 100.d0)
+      if (iy_perc_done>=aux_integer) then
+!$omp critical (omp_interpolation_progress)
+         write(*,'(a,i9,a,i3,a)') "      iz: ",iz,", iy=",iy_perc_done,        &
+            "%(ny_out)"
+         aux_integer = aux_integer + 10
+!$omp end critical (omp_interpolation_progress)
+      endif
    enddo
 !$omp end parallel do
 enddo
