@@ -35,7 +35,7 @@ integer(4) :: i_rec
 ! Percentage of rows interpolated
 integer(4) :: iy_perc_done
 integer(4) :: aux_integer
-double precision :: denom,distance,delta_x,delta_y,delta_lon,delta_lat
+double precision :: denom,distance,delta_x,delta_y,delta_lon,delta_lat,eps
 character(100) :: array_name
 !------------------------
 ! Explicit interfaces
@@ -97,7 +97,7 @@ do iz=1,nz_out
 !$omp shared(threshold_neg,normalized_influence_radius,distance_exponent)      &
 !$omp shared(missing_data_value,iz,x_min_out,y_min_out,z_min_out,dy_out,dz_out)&
 !$omp shared(aux_integer)                                                      &
-!$omp private(ix,iy,denom,distance,i_rec,iy_perc_done)
+!$omp private(ix,iy,denom,distance,i_rec,iy_perc_done,eps)
    do iy=1,ny_out
       do ix=1,nx_out
          field_out(ix,iy,iz,1) = x_min_out + dx_out * (ix - 0.5d0)
@@ -105,28 +105,24 @@ do iz=1,nz_out
          field_out(ix,iy,iz,3) = z_min_out + dz_out * (iz - 0.5d0)
          denom = 0.d0
          do i_rec=1,n_points_in
-            if ((field_in(i_rec,4)<=threshold_pos).and.                        &
-               (field_in(i_rec,4)>=threshold_neg)) then
-               distance = dsqrt((field_in(i_rec,1) - field_out(ix,iy,iz,1)) ** &
-                          2 + (field_in(i_rec,2) - field_out(ix,iy,iz,2)) ** 2 &
-                          + (field_in(i_rec,3) - field_out(ix,iy,iz,3)) ** 2)
-               if (distance<(1.d-6*dx_out)) then
+            distance = dsqrt((field_in(i_rec,1) - field_out(ix,iy,iz,1)) **    &
+                       2 + (field_in(i_rec,2) - field_out(ix,iy,iz,2)) ** 2    &
+                       + (field_in(i_rec,3) - field_out(ix,iy,iz,3)) ** 2)
+            if (distance>(normalized_influence_radius*dx_out*dsqrt(3.d0))) cycle
+            eps = 1.d-9 * (-999.d0 ** 2) / dabs(-999.d0)
+            if ((field_in(i_rec,4)<=(-999.d0+eps)).and.                        &
+               (field_in(i_rec,4)>=(-999.d0-eps))) cycle
+            if ((field_in(i_rec,4)>threshold_pos).or.                          &
+               (field_in(i_rec,4)<threshold_neg)) cycle
+            if (distance>=(1.d-6*dx_out)) then
+               field_out(ix,iy,iz,4) = field_out(ix,iy,iz,4) +                 &
+                                       field_in(i_rec,4) / distance **         &
+                                       abs(distance_exponent)
+               denom = denom + 1.d0 / distance ** abs(distance_exponent)
+               else
                   field_out(ix,iy,iz,4) = field_in(i_rec,4)
                   denom = 1.d0
                   exit
-                  else
-                     if ((distance<=                                           &
-                        (normalized_influence_radius*dx_out*dsqrt(3.d0))).and. &
-                        (field_in(i_rec,4)/=-999.d0)) then
-                        field_out(ix,iy,iz,4) = field_out(ix,iy,iz,4) +        &
-                                                field_in(i_rec,4) / distance **&
-                                                abs(distance_exponent)
-                        denom = denom + 1.d0 / distance **                     &
-                                abs(distance_exponent)
-                     endif
-               endif
-               else
-                  cycle
             endif
          enddo
          if (denom/=0.d0) then
