@@ -92,18 +92,13 @@ read(11,*)
 read(11,*) normalized_threshold_pos,normalized_threshold_neg,                  &
    normalized_influence_radius,distance_exponent
 read(11,*)
-read(11,*) lam_min,phi_min,abs_mean_latitude
+read(11,*) abs_mean_latitude
 read(11,*)
 read(11,*) missing_data_value
 read(11,*)
 read(11,*) n_parts_out_x,n_parts_out_y,n_parts_out_z
 read(11,*)
-read(11,*,IOSTAT=read_stat) n_input_grid_files
-if (read_stat/=0) then
-   write(uerr,*) "Error in reading Grid_Interpolator.inp. The program stops ", &
-      "here. "
-   stop
-endif
+read(11,*) n_input_grid_files
 array_name = "input_grid_file_name"
 call allocate_de_ch100_r1(.true.,input_grid_file_name,n_input_grid_files,uerr, &
    array_name)
@@ -120,6 +115,8 @@ do i_igf=1,n_input_grid_files
    endif
    n_points_in = n_points_in + n_points_in_file(i_igf)
 enddo
+read(11,*)
+read(11,*) x_lon_trans,y_lat_trans
 file_name = "Grid_Interpolator.inp"
 call open_close_file(.false.,11,file_name,uerr)
 nx_out = int((x_max_out - x_min_out) / dx_out)

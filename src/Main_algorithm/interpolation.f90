@@ -35,7 +35,7 @@ integer(4) :: i_rec
 ! Percentage of rows interpolated
 integer(4) :: iy_perc_done
 integer(4) :: aux_integer,iy_count
-double precision :: denom,distance,delta_x,delta_y,delta_lon,delta_lat,eps
+double precision :: denom,distance,eps
 character(100) :: array_name
 !------------------------
 ! Explicit interfaces
@@ -75,18 +75,12 @@ end interface
 !------------------------
 array_name = "field_out"
 call allocate_de_dp_r4(.true.,field_out,nx_out,ny_out,nz_out,4,uerr,array_name)
-if (abs_mean_latitude>-1.d-9) then
-   array_name = "field_out_lon_lat"
-   call allocate_de_dp_r4(.true.,field_out_lon_lat,nx_out,ny_out,nz_out,2,uerr,&
-      array_name)
-endif
 !------------------------
 ! Initializations
 !------------------------
 delta_lon = 1.d0
 delta_lat = 1.d0
 field_out(:,:,:,:) = 0.d0
-if (abs_mean_latitude>-1.d-9) field_out_lon_lat(:,:,:,:) = 0.d0
 aux_integer = 0
 iy_count = 0
 !------------------------
@@ -145,14 +139,16 @@ do iz=1,nz_out
 !$omp end parallel do
 enddo
 if (abs_mean_latitude>-1.d-9) then
-   ! Grid conversion: (X,Y) in (m) to (lon,lat) in (°)
+! Reference system conversion: cartographic to geographic: (X,Y) in (m) to 
+! (lon,lat) in (°)
    call delta_lon_lat_to_delta_x_y(delta_lon,delta_lat,abs_mean_latitude,      &
       delta_x,delta_y)
-   field_out_lon_lat(:,:,:,1) = delta_lon * field_out(:,:,:,1) / delta_x +     &
-      lam_min
-   field_out_lon_lat(:,:,:,2) = delta_lat * field_out(:,:,:,2) / delta_y +     &
-      phi_min
+   field_out(:,:,:,1) = delta_lon * field_out(:,:,:,1) / delta_x
+   field_out(:,:,:,2) = delta_lat * field_out(:,:,:,2) / delta_y
 endif
+! Reference system conversion: local (SPHERA) to global (georeferenced)
+field_out(:,:,:,1) = field_out(:,:,:,1) + x_lon_trans
+field_out(:,:,:,2) = field_out(:,:,:,2) + y_lat_trans
 !------------------------
 ! Deallocations
 !------------------------

@@ -53,12 +53,11 @@
 !    "influence_radius" = "normalized_influence_radius" * sqrt(3) * "dx_out"
 ![?] <distance_exponent>: exponent of the distance for Shepard's interpolation 
 !    (a positive integer)
-![?] <lam_min>: database minimum longitude in the geodetic system
-![?] <phi_min>: database minimum latitude in the geodetic system
 ![?] <abs_mean_latitude>: absolute value of the mean latitude with respect to 
 !    the maximum latitude variation, provided the minimum latitude. 
-!    Typically, abs_mean_latitude = phi_min + delta_lat/2. In case of negative 
-!    value, the input and output reference systems are supposed to be Cartesian 
+!    Typically, abs_mean_latitude = lat_min + delta_lat/2. lat_min is the 
+!    database minimum latitudeIn case of negative value, the input and output 
+!    reference systems are supposed to be Cartesian 
 !    or cartographic: no conversion to geographic coordinates is carried out.
 ![?] <missing_data_value>: value to be assigned to the output points whose 
 !    influence region contains no input data
@@ -67,7 +66,7 @@
 !    <z_max_out> <dx_out> <dy_out> <dz_out>
 ![*] <normalized_threshold_pos> <normalized_threshold_neg> 
 !    <normalized_influence_radius> <distance_exponent>
-![*] <lam_min> <phi_min> <abs_mean_latitude>
+![*] <abs_mean_latitude>
 ![*] <missing_data_value>: missing-data value assigned in output. The 
 !    missing-data value in input is assumed to be "-999." .
 !-------------------------------------------------------------------------------
@@ -77,7 +76,7 @@ ___ ___ ___ ___ ___ ___ ___ ___ ___
 ! This is a mandatory (comment) line
 ___ ___ ___ ___
 ! This is a mandatory (comment) line
-___ ___ ___
+___
 ! This is a mandatory (comment) line
 ___
 !>>>****************************************************************************
@@ -113,6 +112,21 @@ ___
 ![?] <n_points_in_file>: number of input records/points of the current file
 !-------------------------------------------------------------------------------
 ![*] <input_grid_file_name> <n_points_in_file> 
+!-------------------------------------------------------------------------------
+!<<<****************************************************************************
+! This is a mandatory (comment) line
+___ ___
+!>>>****************************************************************************
+!-------------------------------------------------------------------------------
+![?] (<x_lon_trans>,<y_lat_trans>): vector of horizontal translation. It is 
+!    applied to all the output points before the writing on the output files. 
+!    This procedure allows to come back to the global reference system after 
+!    SPHERA simulation on a local reference system and after the possible 
+!    reference system conversion to geographic coordinates (within Grid 
+!    Interpolator). In this case, the translation vector is expressed in 
+!    longitude and latitude (otherwise in x and y).
+!-------------------------------------------------------------------------------
+![*] <x_lon_trans> <y_lat_trans>  
 !-------------------------------------------------------------------------------
 !<<<****************************************************************************
 ! This is a mandatory (comment) line

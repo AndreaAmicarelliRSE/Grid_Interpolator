@@ -31,8 +31,9 @@ implicit none
 ! Generic node indices for "do" constructs
 integer(4) :: ix,iy,iz
 integer(4) :: i_file_out
-double precision :: x_min_out_file,y_min_out_file
-character(100) :: output_file_name_1,output_file_name_2,array_name
+double precision :: x_min_out_file,y_min_out_file,dx_out_aux,dy_out_aux
+double precision :: aux_scalar
+character(100) :: output_file_name,array_name
 !------------------------
 ! Explicit interfaces
 !------------------------
@@ -78,17 +79,15 @@ end interface
 !$omp shared(n_parts_out_x,n_parts_out_y,n_parts_out_z,uerr,nz_out,ny_out)     &
 !$omp shared(nx_out,ix_out_min_file,ix_out_max_file,iy_out_min_file)           &
 !$omp shared(iy_out_max_file,iz_out_min_file,iz_out_max_file,field_out)        &
-!$omp shared(field_out_lon_lat,abs_mean_latitude)                              &
-!$omp private(i_file_out,output_file_name_1,output_file_name_2,iz,iy,ix)
+!$omp shared(abs_mean_latitude)                                                &
+!$omp private(i_file_out,output_file_name,iz,iy,ix)
 do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
-   write(output_file_name_1,'(a,i4.4,a)') 'output_field_',i_file_out,'.csv'
-   call open_close_file(.true.,10+i_file_out,output_file_name_1,uerr)
-   write(10+i_file_out,'(4a)') "x;","y;","z;","variable"
+   write(output_file_name,'(a,i4.4,a)') 'output_field_',i_file_out,'.csv'
+   call open_close_file(.true.,10+i_file_out,output_file_name,uerr)
    if (abs_mean_latitude>-1.d-9) then
-      write(output_file_name_2,'(a,i4.4,a)') 'output_field_lon_lat_',          &
-         i_file_out,'.csv'
-      call open_close_file(.true.,1010+i_file_out,output_file_name_2,uerr)
       write(1010+i_file_out,'(4a)') "lam;","phi;","z;","variable"
+      else
+         write(10+i_file_out,'(4a)') "x;","y;","z;","variable"
    endif
    do iz=1,nz_out
       do iy=1,ny_out
@@ -102,18 +101,11 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
                write(10+i_file_out,'(3(ES18.9,a),ES18.9)')                     &
                   field_out(ix,iy,iz,1),";",field_out(ix,iy,iz,2),";",         &
                   field_out(ix,iy,iz,4),";",field_out(ix,iy,iz,4)
-               if (abs_mean_latitude>-1.d-9) then
-                  write(1010+i_file_out,'(3(ES18.9,a),ES18.9)')                &
-                     field_out_lon_lat(ix,iy,iz,1),";",                        &
-                     field_out_lon_lat(ix,iy,iz,2),";",                        &
-                     field_out(ix,iy,iz,4),";",field_out(ix,iy,iz,4)
-               endif
             endif
          enddo
       enddo
    enddo
-   call open_close_file(.false.,10+i_file_out,output_file_name_1,uerr)
-   call open_close_file(.false.,1010+i_file_out,output_file_name_2,uerr)
+   call open_close_file(.false.,10+i_file_out,output_file_name,uerr)
 enddo
 !$omp end parallel do
 ! .dem output grid in cartographic coordinates (only for the bottom layer)
@@ -123,12 +115,13 @@ enddo
 !$omp shared(n_parts_out_x,n_parts_out_y,n_parts_out_z,uerr,ix_out_min_file)   &
 !$omp shared(iy_out_min_file,x_min_out,dx_out,y_min_out,dy_out,field_out)      &
 !$omp shared(missing_data_value,ny_out,nx_out,ix_out_max_file,iy_out_max_file) &
-!$omp shared(abs_mean_latitude)                                                &
-!$omp private(i_file_out,output_file_name_1,x_min_out_file,y_min_out_file,ix)  &
-!$omp private(iy,iz)
+!$omp shared(abs_mean_latitude,x_lon_trans,y_lat_trans,delta_lon,delta_lat)    &
+!$omp shared(delta_x,delta_y)                                                  &
+!$omp private(i_file_out,output_file_name,x_min_out_file,y_min_out_file,ix)    &
+!$omp private(iy,iz,dx_out_aux,dy_out_aux,aux_scalar)
 do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
-   write(output_file_name_1,'(a,i4.4,a)') 'output_field_',i_file_out,'.dem'
-   call open_close_file(.true.,10+i_file_out,output_file_name_1,uerr)
+   write(output_file_name,'(a,i4.4,a)') 'output_field_',i_file_out,'.dem'
+   call open_close_file(.true.,10+i_file_out,output_file_name,uerr)
    write(10+i_file_out,'(a,i15)') "ncols ",                                    &
       (ix_out_max_file(i_file_out)-ix_out_min_file(i_file_out)+1)
    write(10+i_file_out,'(a,i15)') "nrows ",                                    &
@@ -136,10 +129,30 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
    x_min_out_file = x_min_out + 0.5d0 * dx_out + (ix_out_min_file(i_file_out)  &
                     - 1) * dx_out
    y_min_out_file = y_min_out + 0.5d0 * dy_out + (iy_out_min_file(i_file_out)  &
-                    - 1) * dx_out
+                    - 1) * dy_out
+   dx_out_aux = dx_out
+   dy_out_aux = dy_out
+   if (abs_mean_latitude>-1.d-9) then
+! Reference system conversion: cartographic to geographic: (X,Y) in (m) to 
+! (lon,lat) in (°)
+      x_min_out_file = delta_lon * x_min_out_file / delta_x
+      y_min_out_file = delta_lat * y_min_out_file / delta_y
+! Reference system conversion: cartographic to geographic: (X,Y) in (m) to 
+! (lon,lat) in (°)
+! In the future, dx_out and dy_out might depend on the output file. Thus, their 
+! conversion is repeated each file
+      dx_out_aux = delta_lon * dx_out_aux / delta_x
+      dy_out_aux = delta_lat * dy_out_aux / delta_y
+   endif
+! Reference system conversion: local (SPHERA) to global (georeferenced)
+   x_min_out_file = x_min_out_file + x_lon_trans
+   y_min_out_file = y_min_out_file + y_lat_trans
+! Anisotropy factor for rectangular cells
+   aux_scalar = dy_out_aux / dx_out_aux
    write(10+i_file_out,'(a,ES18.10)') "xllcentre ",x_min_out_file
    write(10+i_file_out,'(a,ES18.10)') "yllcentre ",y_min_out_file
-   write(10+i_file_out,'(a,g15.5)') "cellsize ",dx_out
+   write(10+i_file_out,'(2(a,g15.5))') "cellsize ",dx_out_aux," dy/cellsize ", &
+      aux_scalar
    write(10+i_file_out,*) "NODATA_value ",missing_data_value
    iz = 1
    do iy=iy_out_max_file(i_file_out),iy_out_min_file(i_file_out),-1
@@ -148,7 +161,7 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
       enddo
       write(10+i_file_out,*)
    enddo
-   call open_close_file(.false.,10+i_file_out,output_file_name_1,uerr)
+   call open_close_file(.false.,10+i_file_out,output_file_name,uerr)
 enddo
 !$omp end parallel do
 !------------------------
@@ -168,9 +181,5 @@ array_name = "iz_out_max_file"
 call allocate_de_int4_r1(.false.,iz_out_max_file,0,uerr,array_name)
 array_name = "field_out"
 call allocate_de_dp_r4(.false.,field_out,0,0,0,0,uerr,array_name)
-if (abs_mean_latitude>-1.d-9) then
-   array_name = "field_out_lon_lat"
-   call allocate_de_dp_r4(.false.,field_out_lon_lat,0,0,0,0,uerr,array_name)
-endif
 return
 end subroutine writing_output_data

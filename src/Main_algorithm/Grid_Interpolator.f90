@@ -23,7 +23,8 @@
 !              field is available in both the file formats ".csv" and ".dem" 
 !              and can be partitioned in multiple output files. Despiking is 
 !              available. Output coordinates are also expressed as 
-!              geographical coordinates (longitude, latitude).
+!              geographical coordinates (longitude, latitude) and are 
+!              possibly translated on a global reference system.
 !-------------------------------------------------------------------------------
 program Grid_Interpolator
 !------------------------

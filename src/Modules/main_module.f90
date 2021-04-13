@@ -34,10 +34,11 @@ integer(4) :: uerr = 0
 integer(4) :: n_points_in
 integer(4) :: distance_exponent,n_parts_out_x,n_parts_out_y,n_parts_out_z
 double precision :: x_min_out,y_min_out,z_min_out,x_max_out,y_max_out,z_max_out
-double precision :: dx_out,dy_out,dz_out,normalized_threshold_pos,phi_min
-double precision :: normalized_threshold_neg,normalized_influence_radius,lam_min
-double precision :: abs_mean_latitude,missing_data_value
-double precision :: threshold_pos,threshold_neg
+double precision :: dx_out,dy_out,dz_out,normalized_threshold_pos
+double precision :: normalized_threshold_neg,normalized_influence_radius
+double precision :: abs_mean_latitude,missing_data_value,delta_x,delta_y
+double precision :: threshold_pos,threshold_neg,x_lon_trans,y_lat_trans
+double precision :: delta_lat,delta_lon
 ! Arrays of the edge node indices for the output files
 integer(4),dimension(:),allocatable :: ix_out_min_file,ix_out_max_file
 integer(4),dimension(:),allocatable :: iy_out_min_file,iy_out_max_file
@@ -45,7 +46,7 @@ integer(4),dimension(:),allocatable :: iz_out_min_file,iz_out_max_file
 ! Array of the input grid
 double precision,dimension(:,:),allocatable :: field_in
 ! Arrays of the output grids
-double precision,dimension(:,:,:,:),allocatable :: field_out,field_out_lon_lat
+double precision,dimension(:,:,:,:),allocatable :: field_out
 !------------------------
 ! Explicit interfaces
 !------------------------
