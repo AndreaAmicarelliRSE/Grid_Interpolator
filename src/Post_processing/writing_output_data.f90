@@ -31,8 +31,7 @@ implicit none
 ! Generic node indices for "do" constructs
 integer(4) :: ix,iy,iz
 integer(4) :: i_file_out
-double precision :: x_min_out_file,y_min_out_file,dx_out_aux,dy_out_aux
-double precision :: aux_scalar
+double precision :: x_min_out_file,y_min_out_file,dx_out_aux,dy_out_aux,eps
 character(100) :: output_file_name,array_name
 !------------------------
 ! Explicit interfaces
@@ -118,7 +117,7 @@ enddo
 !$omp shared(abs_mean_latitude,x_lon_trans,y_lat_trans,delta_lon,delta_lat)    &
 !$omp shared(delta_x,delta_y)                                                  &
 !$omp private(i_file_out,output_file_name,x_min_out_file,y_min_out_file,ix)    &
-!$omp private(iy,iz,dx_out_aux,dy_out_aux,aux_scalar)
+!$omp private(iy,iz,dx_out_aux,dy_out_aux,eps)
 do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
    write(output_file_name,'(a,i4.4,a)') 'output_field_',i_file_out,'.asc'
    call open_close_file(.true.,10+i_file_out,output_file_name,uerr)
@@ -147,12 +146,17 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
 ! Reference system conversion: local (SPHERA) to global (georeferenced)
    x_min_out_file = x_min_out_file + x_lon_trans
    y_min_out_file = y_min_out_file + y_lat_trans
-! Anisotropy factor for rectangular cells
-   aux_scalar = dy_out_aux / dx_out_aux
    write(10+i_file_out,'(a,ES18.10)') "xllcentre ",x_min_out_file
    write(10+i_file_out,'(a,ES18.10)') "yllcentre ",y_min_out_file
-   write(10+i_file_out,'(2(a,g15.5))') "cellsize ",dx_out_aux," dy/cellsize ", &
-      aux_scalar
+   eps = 1.d-9 * (dy_out_aux ** 2) / dabs(dy_out_aux)
+   if ((dx_out_aux>(dy_out_aux+eps)).or.(dx_out_aux<(dy_out_aux-eps))) then
+! Rectangular cells
+      write(10+i_file_out,'(2(a,g15.5))') "dx ",dx_out_aux," dy ", &
+         dy_out_aux
+      else
+! Squared cells
+         write(10+i_file_out,'(a,g15.5)') "cellsize ",dx_out_aux
+   endif
    write(10+i_file_out,*) "NODATA_value ",missing_data_value
    iz = 1
    do iy=iy_out_max_file(i_file_out),iy_out_min_file(i_file_out),-1
