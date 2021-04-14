@@ -108,8 +108,8 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
    call open_close_file(.false.,10+i_file_out,output_file_name,uerr)
 enddo
 !$omp end parallel do
-! .dem output grid in cartographic coordinates (only for the bottom layer)
-! The vertices of every ".dem" ouput file are ordered as follows: x-values 
+! ".asc" output grid in cartographic coordinates (only for the bottom layer)
+! The vertices of every ".asc" ouput file are ordered as follows: x-values 
 ! ascending, then y-values descending (single z-layer).
 !$omp parallel do default(none)                                                &
 !$omp shared(n_parts_out_x,n_parts_out_y,n_parts_out_z,uerr,ix_out_min_file)   &
@@ -120,7 +120,7 @@ enddo
 !$omp private(i_file_out,output_file_name,x_min_out_file,y_min_out_file,ix)    &
 !$omp private(iy,iz,dx_out_aux,dy_out_aux,aux_scalar)
 do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
-   write(output_file_name,'(a,i4.4,a)') 'output_field_',i_file_out,'.dem'
+   write(output_file_name,'(a,i4.4,a)') 'output_field_',i_file_out,'.asc'
    call open_close_file(.true.,10+i_file_out,output_file_name,uerr)
    write(10+i_file_out,'(a,i15)') "ncols ",                                    &
       (ix_out_max_file(i_file_out)-ix_out_min_file(i_file_out)+1)

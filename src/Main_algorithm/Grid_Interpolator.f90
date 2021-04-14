@@ -20,7 +20,7 @@
 !              from one or more input grid files (file format: 1 comment line 
 !              plus records on 4 columns - x, y, z, variable-) and interpolates 
 !              it on an output grid with any spatial resolution. The output 
-!              field is available in both the file formats ".csv" and ".dem" 
+!              field is available in both the file formats ".csv" and ".asc" 
 !              and can be partitioned in multiple output files. Despiking is 
 !              available. Output coordinates are also expressed as 
 !              geographical coordinates (longitude, latitude) and are 
