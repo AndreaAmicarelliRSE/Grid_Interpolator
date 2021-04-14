@@ -59,16 +59,19 @@
 !    database minimum latitudeIn case of negative value, the input and output 
 !    reference systems are supposed to be Cartesian 
 !    or cartographic: no conversion to geographic coordinates is carried out.
-![?] <missing_data_value>: value to be assigned to the output points whose 
-!    influence region contains no input data
+![?] <missing_data_value>: missing-data value assigned in output. The 
+!    missing-data value in input is assumed to be "-999." .
+![?] <dry_input_value>: formal input value assigned to dry cells (different 
+!    from no-data cells). In the ".asc" output file, it is replaced by 
+!    <missing_data_value> as if it were no data (this is requested by some GIS 
+!    software. 
 !-------------------------------------------------------------------------------
 ![*] <x_min_out> <y_min_out> <z_min_out> <x_max_out> <y_max_out> 
 !    <z_max_out> <dx_out> <dy_out> <dz_out>
 ![*] <normalized_threshold_pos> <normalized_threshold_neg> 
 !    <normalized_influence_radius> <distance_exponent>
 ![*] <abs_mean_latitude>
-![*] <missing_data_value>: missing-data value assigned in output. The 
-!    missing-data value in input is assumed to be "-999." .
+![*] <missing_data_value> <dry_input_value>
 !-------------------------------------------------------------------------------
 !<<<****************************************************************************
 ! This is a mandatory (comment) line
@@ -78,7 +81,7 @@ ___ ___ ___ ___
 ! This is a mandatory (comment) line
 ___
 ! This is a mandatory (comment) line
-___
+___ ___
 !>>>****************************************************************************
 !-------------------------------------------------------------------------------
 ![?] <n_parts_out_x>: number of parts of the output grid along x-axis. The 

@@ -94,7 +94,7 @@ read(11,*) normalized_threshold_pos,normalized_threshold_neg,                  &
 read(11,*)
 read(11,*) abs_mean_latitude
 read(11,*)
-read(11,*) missing_data_value
+read(11,*) missing_data_value,dry_input_value
 read(11,*)
 read(11,*) n_parts_out_x,n_parts_out_y,n_parts_out_z
 read(11,*)

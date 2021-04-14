@@ -38,7 +38,7 @@ double precision :: dx_out,dy_out,dz_out,normalized_threshold_pos
 double precision :: normalized_threshold_neg,normalized_influence_radius
 double precision :: abs_mean_latitude,missing_data_value,delta_x,delta_y
 double precision :: threshold_pos,threshold_neg,x_lon_trans,y_lat_trans
-double precision :: delta_lat,delta_lon
+double precision :: delta_lat,delta_lon,dry_input_value
 ! Arrays of the edge node indices for the output files
 integer(4),dimension(:),allocatable :: ix_out_min_file,ix_out_max_file
 integer(4),dimension(:),allocatable :: iy_out_min_file,iy_out_max_file

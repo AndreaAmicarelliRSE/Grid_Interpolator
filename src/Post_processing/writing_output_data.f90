@@ -115,7 +115,7 @@ enddo
 !$omp shared(iy_out_min_file,x_min_out,dx_out,y_min_out,dy_out,field_out)      &
 !$omp shared(missing_data_value,ny_out,nx_out,ix_out_max_file,iy_out_max_file) &
 !$omp shared(abs_mean_latitude,x_lon_trans,y_lat_trans,delta_lon,delta_lat)    &
-!$omp shared(delta_x,delta_y)                                                  &
+!$omp shared(delta_x,delta_y,dry_input_value)                                  &
 !$omp private(i_file_out,output_file_name,x_min_out_file,y_min_out_file,ix)    &
 !$omp private(iy,iz,dx_out_aux,dy_out_aux,eps)
 do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
@@ -157,8 +157,17 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
    endif
    write(10+i_file_out,*) "NODATA_value ",missing_data_value
    iz = 1
+! In the future, the variable "dry_input_value" might depend on the output 
+! file. Thus, the assessment of the variable "eps_aux" is repeated each file.
+   eps = 1.d-9 * (dry_input_value ** 2) / dabs(dry_input_value)
    do iy=iy_out_max_file(i_file_out),iy_out_min_file(i_file_out),-1
       do ix=ix_out_min_file(i_file_out),ix_out_max_file(i_file_out)
+! In the output ".asc" file, the input value asociated with dry cells is 
+! replaced by the missing data value, as requested by some GIS software. 
+         if ((field_out(ix,iy,1,4)<(dry_input_value+eps)).and.                 &
+            (field_out(ix,iy,1,4)>(dry_input_value-eps))) then
+            field_out(ix,iy,1,4) = missing_data_value
+         endif
          write(10+i_file_out,'(1x,g15.5)',ADVANCE='NO') field_out(ix,iy,1,4)
       enddo
       write(10+i_file_out,*)
