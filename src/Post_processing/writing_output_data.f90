@@ -125,10 +125,8 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
       (ix_out_max_file(i_file_out)-ix_out_min_file(i_file_out)+1)
    write(10+i_file_out,'(a,i15)') "nrows ",                                    &
       (iy_out_max_file(i_file_out)-iy_out_min_file(i_file_out)+1)
-   x_min_out_file = x_min_out + 0.5d0 * dx_out + (ix_out_min_file(i_file_out)  &
-                    - 1) * dx_out
-   y_min_out_file = y_min_out + 0.5d0 * dy_out + (iy_out_min_file(i_file_out)  &
-                    - 1) * dy_out
+   x_min_out_file = x_min_out + (ix_out_min_file(i_file_out) - 1) * dx_out
+   y_min_out_file = y_min_out + (iy_out_min_file(i_file_out) - 1) * dy_out
    dx_out_aux = dx_out
    dy_out_aux = dy_out
    if (abs_mean_latitude>-1.d-9) then
@@ -146,8 +144,8 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
 ! Reference system conversion: local (SPHERA) to global (georeferenced)
    x_min_out_file = x_min_out_file + x_lon_trans
    y_min_out_file = y_min_out_file + y_lat_trans
-   write(10+i_file_out,'(a,ES18.10)') "xllcentre ",x_min_out_file
-   write(10+i_file_out,'(a,ES18.10)') "yllcentre ",y_min_out_file
+   write(10+i_file_out,'(a,ES18.10)') "xllcorner ",x_min_out_file
+   write(10+i_file_out,'(a,ES18.10)') "yllcorner ",y_min_out_file
    eps = 1.d-9 * (dy_out_aux ** 2) / dabs(dy_out_aux)
    if ((dx_out_aux>(dy_out_aux+eps)).or.(dx_out_aux<(dy_out_aux-eps))) then
 ! Rectangular cells
