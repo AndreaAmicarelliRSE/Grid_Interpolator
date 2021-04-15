@@ -84,7 +84,7 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
    write(output_file_name,'(a,i4.4,a)') 'output_field_',i_file_out,'.csv'
    call open_close_file(.true.,10+i_file_out,output_file_name,uerr)
    if (abs_mean_latitude>-1.d-9) then
-      write(1010+i_file_out,'(4a)') "lam;","phi;","z;","variable"
+      write(10+i_file_out,'(4a)') "lam;","phi;","z;","variable"
       else
          write(10+i_file_out,'(4a)') "x;","y;","z;","variable"
    endif
@@ -149,8 +149,7 @@ do i_file_out=1,(n_parts_out_x*n_parts_out_y*n_parts_out_z)
    eps = 1.d-9 * (dy_out_aux ** 2) / dabs(dy_out_aux)
    if ((dx_out_aux>(dy_out_aux+eps)).or.(dx_out_aux<(dy_out_aux-eps))) then
 ! Rectangular cells
-      write(10+i_file_out,'(2(a,g15.5))') "dx ",dx_out_aux," dy ", &
-         dy_out_aux
+      write(10+i_file_out,'(2(a,g15.5))') "dx ",dx_out_aux," dy ",dy_out_aux
       else
 ! Squared cells
          write(10+i_file_out,'(a,g15.5)') "cellsize ",dx_out_aux
